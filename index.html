@@ -35,8 +35,8 @@
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
-                const value = data.values[0][0];
-                valueDiv.textContent = value;
+                const value = parseFloat(data.values[0][0]);
+                valueDiv.textContent = value.toFixed(2);
                 if (parseFloat(value) > 0) {
                     valueDiv.style.color = 'green';
                 } else if (parseFloat(value) < 0) {
