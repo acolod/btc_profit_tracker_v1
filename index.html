@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTC Profit</title>
+    <title>Bitcoin Profit Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,32 +18,11 @@
             padding: 10px 20px;
             font-size: 1em;
             cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <h1 style="font-weight: normal;">BTC<br>Profit</h1>
+    <h1>Bitcoin Profit Tracker</h1>
     <div id="value">Fetching...</div>
     <button onclick="fetchData()">Refresh</button>
 
@@ -52,12 +31,8 @@
 
         async function fetchData() {
             const valueDiv = document.getElementById('value');
-            valueDiv.innerHTML = '<div class="spinner"></div>';
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
                 const data = await response.json();
                 const value = data.values[0][0];
                 valueDiv.textContent = value;
