@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Profit Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #value {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bitcoin Profit Tracker</h1>
+    <div id="value">Fetching...</div>
+    <button onclick="fetchData()">Refresh</button>
+
+    <script>
+        const API_URL = "https://sheets.googleapis.com/v4/spreadsheets/1kMeuGAQtW8-WiTXmeB3_Hym2T_-OFDzBsG7AiFKCjmI/values/bitcoin_profit_loss?key=AIzaSyBnd3cYG-09Sw1CBsfvgjPxiSzMTBcOJjI";
+
+        async function fetchData() {
+            const valueDiv = document.getElementById('value');
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                const value = data.values[0][0];
+                valueDiv.textContent = value;
+            } catch (error) {
+                valueDiv.textContent = "Error fetching data.";
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Fetch data on page load
+        fetchData();
+    </script>
+</body>
+</html>
