@@ -40,7 +40,7 @@
                 const sanitizedValue = rawValue.replace(/[^0-9.-]/g, '');
                 const value = parseFloat(sanitizedValue);
                 console.log('Fetched value:', value);
-                valueDiv.textContent = value.toFixed(2);
+                valueDiv.textContent = `$${value.toFixed(2)}`;
                 if (value > 0) {
                     valueDiv.style.color = 'green';
                 } else if (value < 0) {
