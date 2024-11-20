@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <h1 style="font-size: 1.5em;">BTC<br>Profit:</h1>
+    <h1 style="font-size: 1.2em;">BTC<br>Profit:</h1>
     <div id="value">Fetching...</div>
     <div style="margin-top: 40px;"></div>
     <button onclick="fetchData()">Refresh</button>
@@ -37,6 +37,13 @@
                 const data = await response.json();
                 const value = data.values[0][0];
                 valueDiv.textContent = value;
+                if (parseFloat(value) > 0) {
+                    valueDiv.style.color = 'green';
+                } else if (parseFloat(value) < 0) {
+                    valueDiv.style.color = 'red';
+                } else {
+                    valueDiv.style.color = 'black';
+                }
             } catch (error) {
                 valueDiv.textContent = "Error fetching data.";
                 console.error("Error fetching data:", error);
