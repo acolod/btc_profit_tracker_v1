@@ -35,11 +35,14 @@
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
-                const value = parseFloat(data.values[0][0]);
+                const rawValue = data.values[0][0];
+                const sanitizedValue = rawValue.replace(/[^0-9.-]/g, '');
+                const value = parseFloat(sanitizedValue);
+                console.log('Fetched value:', value);
                 valueDiv.textContent = value.toFixed(2);
-                if (parseFloat(value) > 0) {
+                if (value > 0) {
                     valueDiv.style.color = 'green';
-                } else if (parseFloat(value) < 0) {
+                } else if (value < 0) {
                     valueDiv.style.color = 'red';
                 } else {
                     valueDiv.style.color = 'black';
