@@ -11,7 +11,7 @@
             margin: 50px;
         }
         #value, #holdings {
-            font-size: 2em;
+            font-size: 1.5em;
             margin: 20px 0;
         }
         button {
@@ -51,8 +51,9 @@
                 console.log('Fetched value:', value);
                 console.log('Fetched holdings:', holdings);
                 
-                valueDiv.textContent = `$${value.toFixed(2)}`;
-                holdingsDiv.textContent = `$${holdings.toFixed(2)}`;
+                valueDiv.textContent = `$${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+                holdingsDiv.textContent = `$${holdings.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+
 
                 if (value > 0) {
                     valueDiv.style.color = 'green';
