@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereum Profit Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #value, #holdings {
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="font-size: 1.2em; margin-bottom: 1px;">ETH<br>Profit:</h1>
+    <div id="value" style="margin-bottom: 20px;">Fetching...</div>
+    <h1 style="font-size: 1.2em; margin-bottom: 1px;">Total<br>Worth:</h1>
+    <div id="holdings" style="margin-bottom: 40px;">Fetching...</div>
+    <div style="margin-top: 40px;"></div>
+    <button onclick="fetchData()">Refresh</button>
+
+    <script>
+        const API_URL = "https://sheets.googleapis.com/v4/spreadsheets/1kMeuGAQtW8-WiTXmeB3_Hym2T_-OFDzBsG7AiFKCjmI/values/'ETH Tracker'!C1:C2?key=AIzaSyBnd3cYG-09Sw1CBsfvgjPxiSzMTBcOJjI";
+
+        async function fetchData() {
+            const valueDiv = document.getElementById('value');
+            const holdingsDiv = document.getElementById('holdings');
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                console.log('Fetched data:', data);
+                const rawValue = data.values && data.values[0] && data.values[0][0] ? data.values[0][0] : '0';
+                const rawHoldings = data.values && data.values[1] && data.values[1][0] ? data.values[1][0] : '0';
+                
+                const sanitizedValue = rawValue.replace(/[^0-9.-]/g, '');
+                const sanitizedHoldings = rawHoldings.replace(/[^0-9.-]/g, '');
+                
+                const value = parseFloat(sanitizedValue);
+                const holdings = parseFloat(sanitizedHoldings);
+                
+                console.log('Fetched value:', value);
+                console.log('Fetched holdings:', holdings);
+                
+                valueDiv.textContent = `$${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+                holdingsDiv.textContent = `$${holdings.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+
+
+                if (value > 0) {
+                    valueDiv.style.color = 'green';
+                } else if (value < 0) {
+                    valueDiv.style.color = 'red';
+                } else {
+                    valueDiv.style.color = 'black';
+                }
+
+                if (holdings > 0) {
+                    holdingsDiv.style.color = 'green';
+                } else if (holdings < 0) {
+                    holdingsDiv.style.color = 'red';
+                } else {
+                    holdingsDiv.style.color = 'black';
+                }
+            } catch (error) {
+                valueDiv.textContent = "Error fetching data.";
+                holdingsDiv.textContent = "Error fetching data.";
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Fetch data on page load
+        fetchData();
+    </script>
+</body>
+</html>
