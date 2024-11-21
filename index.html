@@ -10,7 +10,7 @@
             text-align: center;
             margin: 50px;
         }
-        #value {
+        #value, #holdings {
             font-size: 2em;
             margin: 20px 0;
         }
@@ -24,6 +24,8 @@
 <body>
     <h1 style="font-size: 1.2em;">BTC<br>Profit:</h1>
     <div id="value">Fetching...</div>
+    <h1 style="font-size: 1.2em;">Total Holdings Worth:</h1>
+    <div id="holdings">Fetching...</div>
     <div style="margin-top: 40px;"></div>
     <button onclick="fetchData()">Refresh</button>
 
@@ -32,15 +34,26 @@
 
         async function fetchData() {
             const valueDiv = document.getElementById('value');
+            const holdingsDiv = document.getElementById('holdings');
             try {
                 const response = await fetch(API_URL);
                 const data = await response.json();
                 console.log('Fetched data:', data);
                 const rawValue = data.values && data.values[0] && data.values[0][0] ? data.values[0][0] : '0';
+                const rawHoldings = data.values && data.values[1] && data.values[1][0] ? data.values[1][0] : '0';
+                
                 const sanitizedValue = rawValue.replace(/[^0-9.-]/g, '');
+                const sanitizedHoldings = rawHoldings.replace(/[^0-9.-]/g, '');
+                
                 const value = parseFloat(sanitizedValue);
+                const holdings = parseFloat(sanitizedHoldings);
+                
                 console.log('Fetched value:', value);
+                console.log('Fetched holdings:', holdings);
+                
                 valueDiv.textContent = `$${value.toFixed(2)}`;
+                holdingsDiv.textContent = `$${holdings.toFixed(2)}`;
+
                 if (value > 0) {
                     valueDiv.style.color = 'green';
                 } else if (value < 0) {
@@ -48,8 +61,17 @@
                 } else {
                     valueDiv.style.color = 'black';
                 }
+
+                if (holdings > 0) {
+                    holdingsDiv.style.color = 'green';
+                } else if (holdings < 0) {
+                    holdingsDiv.style.color = 'red';
+                } else {
+                    holdingsDiv.style.color = 'black';
+                }
             } catch (error) {
                 valueDiv.textContent = "Error fetching data.";
+                holdingsDiv.textContent = "Error fetching data.";
                 console.error("Error fetching data:", error);
             }
         }
