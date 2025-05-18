@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Burger Animation</title>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #f0f0f0;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px; /* Added padding for better viewing on small screens */
+        box-sizing: border-box;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    #assembly-area {
+        width: 300px;
+        height: 400px;
+        border: 2px solid #ccc;
+        background-color: #fff;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column-reverse; /* Stack items from bottom up */
+        align-items: center;
+        padding-bottom: 10px; /* Space for the bottom bun to sit nicely */
+    }
+
+    .burger-component {
+        position: relative;
+        opacity: 0; /* Initially hidden */
+        transition: opacity 0.5s ease-in-out; /* Fallback transition */
+        border-radius: 10px;
+        margin-bottom: -10px; /* Controls stacking; adjust as needed */
+    }
+
+    /* --- Component Specific Styles --- */
+    #bottom-bun {
+        width: 180px;
+        height: 30px;
+        background-color: #D2B48C; /* Tan */
+        border-radius: 10px 10px 20px 20px;
+        z-index: 1;
+        margin-bottom: 0; /* Base of the stack */
+    }
+
+    #patty1, #patty2 {
+        width: 160px;
+        height: 25px;
+        background-color: #5E2C04; /* Dark brown */
+        border-radius: 15px; /* Slightly less than 50% for a thicker look */
+    }
+     #patty1 { z-index: 2; }
+     #patty2 { z-index: 5; }
+
+
+    #cheese1, #cheese2 {
+        width: 170px;
+        height: 15px;
+        background-color: #FFD700; /* Gold/Yellow */
+        border-radius: 5px;
+    }
+    #cheese1 { z-index: 3; }
+    #cheese2 { z-index: 6; }
+
+
+    #onions {
+        width: 150px;
+        height: 10px;
+        background-image: radial-gradient(circle at center, #f8f8f8 30%, transparent 31%),
+                          radial-gradient(circle at center, #f8f8f8 30%, transparent 31%);
+        background-size: 15px 15px; /* Slightly larger, fewer "pieces" */
+        background-position: 0 0, 7.5px 5px;
+        z-index: 4;
+        /* A very simplified representation of chopped onions */
+    }
+
+    #sauce {
+        width: 140px;
+        height: 15px;
+        background-color: #C00000; /* Red sauce */
+        border-radius: 8px;
+        z-index: 7;
+    }
+
+    #top-bun {
+        width: 180px;
+        height: 50px;
+        background-color: #D2B48C; /* Tan */
+        border-radius: 30px 30px 10px 10px; /* Domed top */
+        z-index: 8;
+    }
+
+    /* --- Animation Classes --- */
+    .appear {
+        opacity: 1 !important;
+        animation-name: arrive; /* Default animation */
+        animation-duration: 0.7s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-out;
+    }
+
+    @keyframes arrive {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0px);
+        }
+    }
+
+    #bottom-bun.appear {
+        animation-name: slideInFromBottom;
+    }
+    @keyframes slideInFromBottom {
+        0% {
+            opacity: 0;
+            transform: translateY(100px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0px);
+        }
+    }
+    
+    #cheese1.appear, #cheese2.appear {
+        animation-name: meltOn;
+        animation-duration: 1s;
+    }
+    @keyframes meltOn {
+        0% {
+            opacity: 0;
+            transform: translateY(20px) scaleX(0.8);
+        }
+        60% {
+            opacity: 1;
+            transform: translateY(0px) scaleX(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0px) scaleX(1);
+        }
+    }
+
+    #sauce.appear {
+        animation-name: sauceSpread;
+        animation-duration: 0.8s;
+    }
+    @keyframes sauceSpread {
+        0% {
+            opacity: 0;
+            transform: translateY(10px) scaleX(0.2);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0px) scaleX(1);
+        }
+    }
+
+    #top-bun.appear {
+         animation-name: dropOnTop;
+         animation-duration: 0.8s;
+         animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy */
+    }
+    @keyframes dropOnTop {
+        0% {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        60% {
+             opacity: 1;
+            transform: translateY(5px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0px);
+        }
+    }
+
+    .button-container {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px; /* Space between buttons */
+    }
+
+    button {
+        padding: 12px 25px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        color: white;
+        border-radius: 5px;
+        transition: background-color 0.3s, transform 0.1s;
+    }
+    button:hover {
+        filter: brightness(90%);
+    }
+    button:active {
+        transform: scale(0.98);
+    }
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    #startAnimation {
+        background-color: #4CAF50; /* Green */
+    }
+    #resetAnimation {
+        background-color: #f44336; /* Red */
+    }
+
+</style>
+</head>
+<body>
+
+<h1>Burger Assembly Animation</h1>
+<div id="assembly-area">
+    <div class="burger-component" id="top-bun"></div>
+    <div class="burger-component" id="sauce"></div>
+    <div class="burger-component" id="cheese2"></div>
+    <div class="burger-component" id="patty2"></div>
+    <div class="burger-component" id="onions"></div>
+    <div class="burger-component" id="cheese1"></div>
+    <div class="burger-component" id="patty1"></div>
+    <div class="burger-component" id="bottom-bun"></div>
+</div>
+<div class="button-container">
+    <button id="startAnimation">Build My Burger!</button>
+    <button id="resetAnimation">Reset</button>
+</div>
+
+<script>
+    const componentOrder = [
+        'bottom-bun',
+        'patty1',
+        'cheese1',
+        'onions',
+        'patty2',
+        'cheese2',
+        'sauce',
+        'top-bun'
+    ];
+
+    const components = {};
+    componentOrder.forEach(id => {
+        components[id] = document.getElementById(id);
+    });
+
+    const startButton = document.getElementById('startAnimation');
+    const resetButton = document.getElementById('resetAnimation');
+    let currentStep = 0;
+    let animationTimeout;
+
+    function resetBurger() {
+        clearTimeout(animationTimeout);
+        componentOrder.forEach(id => {
+            if (components[id]) {
+                components[id].classList.remove('appear');
+                // Force reflow to allow re-triggering animation immediately
+                void components[id].offsetWidth;
+            }
+        });
+        currentStep = 0;
+        if (startButton) {
+            startButton.disabled = false;
+        }
+    }
+
+    function animateNextStep() {
+        if (currentStep < componentOrder.length) {
+            const componentId = componentOrder[currentStep];
+            if (components[componentId]) {
+                components[componentId].classList.add('appear');
+            }
+            currentStep++;
+            animationTimeout = setTimeout(animateNextStep, 900); // Animation step delay
+        } else {
+            if (startButton) {
+                startButton.disabled = false; // Re-enable after completion
+            }
+            console.log("Burger assembly complete!");
+        }
+    }
+
+    if (startButton) {
+        startButton.addEventListener('click', () => {
+            resetBurger();
+            startButton.disabled = true;
+            animateNextStep();
+        });
+    }
+
+    if (resetButton) {
+        resetButton.addEventListener('click', resetBurger);
+    }
+
+    // Optional: Call resetBurger on load to ensure a clean state if browser caches styles
+    window.addEventListener('load', resetBurger);
+
+</script>
+
+</body>
+</html>
